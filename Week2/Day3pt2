@@ -1,0 +1,68 @@
+// EX1
+
+setTimeout(function(){
+alert("Hello World")
+},2000)
+
+
+setTimeout(function(){
+
+let container = document.getElementById("container")
+
+let p = document.createElement("p")
+
+p.textContent = "Hello World"
+
+container.appendChild(p)
+
+},2000)
+
+
+let container = document.getElementById("container")
+
+let interval = setInterval(function(){
+
+let p = document.createElement("p")
+p.textContent = "Hello World"
+
+container.appendChild(p)
+
+if(container.children.length === 5){
+clearInterval(interval)
+}
+
+},2000)
+
+
+let button = document.getElementById("clear")
+
+button.addEventListener("click", function(){
+clearInterval(interval)
+})
+
+
+
+
+
+// EX2
+
+function myMove(){
+
+let elem = document.getElementById("animate")
+
+let pos = 0
+
+let id = setInterval(frame,1)
+
+function frame(){
+
+if(pos === 350){
+clearInterval(id)
+}else{
+pos++
+elem.style.left = pos + "px"
+}
+
+}
+
+}
