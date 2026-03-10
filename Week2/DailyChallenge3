@@ -1,0 +1,30 @@
+let form = document.getElementById("libform")
+let story = document.getElementById("story")
+
+form.addEventListener("submit", function(event){
+
+event.preventDefault()
+
+let noun = document.getElementById("noun").value
+let adjective = document.getElementById("adjective").value
+let person = document.getElementById("person").value
+let verb = document.getElementById("verb").value
+let place = document.getElementById("place").value
+
+if(noun === "" || adjective === "" || person === "" || verb === "" || place === ""){
+return
+}
+
+let stories = []
+
+stories.push(person + " went to the " + place + " with a " + adjective + " " + noun + " and started to " + verb + ".")
+
+stories.push("One day " + person + " found a " + adjective + " " + noun + " in the " + place + " and decided to " + verb + " with it.")
+
+stories.push("In the " + place + ", " + person + " saw a " + adjective + " " + noun + " and suddenly began to " + verb + ".")
+
+let random = Math.floor(Math.random() * stories.length)
+
+story.textContent = stories[random]
+
+})
