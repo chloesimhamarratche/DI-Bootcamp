@@ -1,0 +1,24 @@
+let planets = ["Mercury","Venus","Earth","Mars","Jupiter","Saturn","Uranus","Neptune"]
+
+let section = document.querySelector(".listPlanets")
+
+for (let i = 0; i < planets.length; i++) {
+
+    let planetDiv = document.createElement("div")
+
+    planetDiv.classList.add("planet")
+
+    planetDiv.innerText = planets[i]
+
+    if (planets[i] === "Mercury") planetDiv.style.background = "gray"
+    if (planets[i] === "Venus") planetDiv.style.background = "orange"
+    if (planets[i] === "Earth") planetDiv.style.background = "blue"
+    if (planets[i] === "Mars") planetDiv.style.background = "red"
+    if (planets[i] === "Jupiter") planetDiv.style.background = "brown"
+    if (planets[i] === "Saturn") planetDiv.style.background = "gold"
+    if (planets[i] === "Uranus") planetDiv.style.background = "lightblue"
+    if (planets[i] === "Neptune") planetDiv.style.background = "purple"
+
+    section.appendChild(planetDiv)
+
+}
