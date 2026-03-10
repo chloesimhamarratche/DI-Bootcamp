@@ -1,0 +1,257 @@
+// EX1
+
+function displayNumbersDivisible(){
+
+let sum = 0
+
+for (let i = 0; i <= 500; i++){
+
+if (i % 23 === 0){
+console.log(i)
+sum += i
+}
+
+}
+
+console.log("Sum:", sum)
+
+}
+
+displayNumbersDivisible()
+
+
+
+
+// EX2
+
+const stock = {
+banana: 6,
+apple: 0,
+pear: 12,
+orange: 32,
+blueberry: 1
+}
+
+const prices = {
+banana: 4,
+apple: 2,
+pear: 1,
+orange: 1.5,
+blueberry: 10
+}
+
+let shoppingList = ["banana","orange","apple"]
+
+function myBill(){
+
+let total = 0
+
+for (let i = 0; i < shoppingList.length; i++){
+
+let item = shoppingList[i]
+
+if (stock[item] > 0){
+
+total += prices[item]
+stock[item] -= 1
+
+}
+
+}
+
+console.log(total)
+
+}
+
+myBill()
+
+
+
+
+// EX3
+
+function changeEnough(itemPrice, amountOfChange){
+
+let quarters = amountOfChange[0] * 0.25
+let dimes = amountOfChange[1] * 0.10
+let nickels = amountOfChange[2] * 0.05
+let pennies = amountOfChange[3] * 0.01
+
+let total = quarters + dimes + nickels + pennies
+
+if (total >= itemPrice){
+return true
+}else{
+return false
+}
+
+}
+
+console.log(changeEnough(4.25,[25,20,5,0]))
+
+
+
+
+// EX4
+
+function hotelCost(){
+
+let nights = prompt("How many nights?")
+
+while(isNaN(nights) || nights === ""){
+nights = prompt("Enter a valid number")
+}
+
+return nights * 140
+
+}
+
+function planeRideCost(){
+
+let destination = prompt("Where are you going?")
+
+while(destination === ""){
+destination = prompt("Enter a destination")
+}
+
+if(destination === "London"){
+return 183
+}else if(destination === "Paris"){
+return 220
+}else{
+return 300
+}
+
+}
+
+function rentalCarCost(){
+
+let days = prompt("How many days?")
+
+while(isNaN(days) || days === ""){
+days = prompt("Enter a valid number")
+}
+
+let cost = days * 40
+
+if(days > 10){
+cost = cost * 0.95
+}
+
+return cost
+
+}
+
+function totalVacationCost(){
+
+let hotel = hotelCost()
+let plane = planeRideCost()
+let car = rentalCarCost()
+
+console.log("Hotel:", hotel)
+console.log("Plane:", plane)
+console.log("Car:", car)
+
+console.log("Total:", hotel + plane + car)
+
+}
+
+totalVacationCost()
+
+
+
+
+// EX5
+
+let div = document.getElementById("container")
+console.log(div)
+
+let lists = document.querySelectorAll(".list")
+
+lists[0].children[1].innerText = "Richard"
+
+lists[1].children[1].remove()
+
+for (let i = 0; i < lists.length; i++){
+lists[i].children[0].innerText = "Chloe"
+}
+
+for (let i = 0; i < lists.length; i++){
+lists[i].classList.add("student_list")
+}
+
+lists[0].classList.add("university","attendance")
+
+div.style.background = "lightblue"
+div.style.padding = "10px"
+
+
+
+// EX6
+
+let nav = document.getElementById("navBar")
+
+nav.setAttribute("id","socialNetworkNavigation")
+
+let ul = document.querySelector("#socialNetworkNavigation ul")
+
+let newLi = document.createElement("li")
+
+let text = document.createTextNode("Logout")
+
+newLi.appendChild(text)
+
+ul.appendChild(newLi)
+
+let firstLi = ul.firstElementChild
+let lastLi = ul.lastElementChild
+
+console.log(firstLi.textContent)
+console.log(lastLi.textContent)
+
+
+
+
+
+// EX7
+
+let allBooks = [
+{
+title: "Harry Potter",
+author: "J.K Rowling",
+image: "https://m.media-amazon.com/images/I/51UoqRAxwEL.jpg",
+alreadyRead: true
+},
+{
+title: "The Alchemist",
+author: "Paulo Coelho",
+image: "https://m.media-amazon.com/images/I/71aFt4+OTOL.jpg",
+alreadyRead: false
+}
+]
+
+let section = document.querySelector(".listBooks")
+
+for (let i = 0; i < allBooks.length; i++) {
+
+let bookDiv = document.createElement("div")
+
+let details = document.createElement("p")
+
+details.innerText = allBooks[i].title + " written by " + allBooks[i].author
+
+if (allBooks[i].alreadyRead === true){
+details.style.color = "red"
+}
+
+let img = document.createElement("img")
+
+img.src = allBooks[i].image
+img.style.width = "100px"
+
+bookDiv.appendChild(details)
+bookDiv.appendChild(img)
+
+section.appendChild(bookDiv)
+
+}
