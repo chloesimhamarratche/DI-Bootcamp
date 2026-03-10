@@ -1,0 +1,127 @@
+// EX1
+
+let h1 = document.querySelector("h1")
+console.log(h1)
+
+let article = document.querySelector("article")
+article.lastElementChild.remove()
+
+let h2 = document.querySelector("h2")
+h2.addEventListener("click", function(){
+h2.style.backgroundColor = "red"
+})
+
+let h3 = document.querySelector("h3")
+h3.addEventListener("click", function(){
+h3.style.display = "none"
+})
+
+let button = document.createElement("button")
+button.innerText = "Make paragraphs bold"
+document.body.appendChild(button)
+
+let paragraphs = document.querySelectorAll("p")
+
+button.addEventListener("click", function(){
+for(let i = 0; i < paragraphs.length; i++){
+paragraphs[i].style.fontWeight = "bold"
+}
+})
+
+h1.addEventListener("mouseover", function(){
+let randomSize = Math.floor(Math.random()*100)
+h1.style.fontSize = randomSize + "px"
+})
+
+
+
+
+// EX2
+
+let form = document.querySelector("form")
+console.log(form)
+
+let fname = document.getElementById("fname")
+let lname = document.getElementById("lname")
+
+console.log(fname)
+console.log(lname)
+
+let firstNameInput = document.getElementsByName("firstname")
+let lastNameInput = document.getElementsByName("lastname")
+
+console.log(firstNameInput)
+console.log(lastNameInput)
+
+form.addEventListener("submit", function(event){
+
+event.preventDefault()
+
+let first = fname.value
+let last = lname.value
+
+if(first === "" || last === ""){
+return
+}
+
+let ul = document.querySelector(".usersAnswer")
+
+let li1 = document.createElement("li")
+li1.textContent = first
+
+let li2 = document.createElement("li")
+li2.textContent = last
+
+ul.appendChild(li1)
+ul.appendChild(li2)
+
+})
+
+
+
+
+// EX3
+
+let allBoldItems
+
+function getBoldItems(){
+allBoldItems = document.querySelectorAll("strong")
+}
+
+function highlight(){
+for(let i = 0; i < allBoldItems.length; i++){
+allBoldItems[i].style.color = "blue"
+}
+}
+
+function returnItemsToDefault(){
+for(let i = 0; i < allBoldItems.length; i++){
+allBoldItems[i].style.color = "black"
+}
+}
+
+getBoldItems()
+
+let paragraph = document.querySelector("p")
+
+paragraph.addEventListener("mouseover", highlight)
+paragraph.addEventListener("mouseout", returnItemsToDefault)
+
+
+
+
+// EX4
+
+let formSphere = document.getElementById("MyForm")
+
+formSphere.addEventListener("submit", function(event){
+
+event.preventDefault()
+
+let radius = document.getElementById("radius").value
+
+let volume = (4/3) * Math.PI * Math.pow(radius,3)
+
+document.getElementById("volume").value = volume
+
+})
