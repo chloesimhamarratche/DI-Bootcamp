@@ -1,0 +1,136 @@
+/ EX1
+
+function funcOne() {
+  let a = 5;
+  if (a > 1) {
+    a = 3;
+  }
+  alert(`inside the funcOne function ${a}`);
+}
+
+let a = 0;
+
+function funcTwo() {
+  a = 5;
+}
+
+function funcThree() {
+  alert(`inside the funcThree function ${a}`);
+}
+
+funcThree();
+funcTwo();
+funcThree();
+
+function funcFour() {
+  window.a = "hello";
+}
+
+function funcFive() {
+  alert(`inside the funcFive function ${a}`);
+}
+
+funcFour();
+funcFive();
+
+let a2 = 1;
+
+function funcSix() {
+  let a2 = "test";
+  alert(`inside the funcSix function ${a2}`);
+}
+
+funcSix();
+
+let a3 = 2;
+
+if (true) {
+  let a3 = 5;
+  alert(`in the if block ${a3}`);
+}
+
+alert(`outside of the if block ${a3}`);
+
+
+/ EX2
+
+const winBattle = () => true;
+
+let experiencePoints = winBattle() ? 10 : 1;
+
+console.log(experiencePoints);
+
+
+/ EX3
+
+const isString = (value) => typeof value === "string";
+
+console.log(isString("hello"));
+console.log(isString([1, 2, 4, 0]));
+
+
+/ EX4
+
+const sum = (a, b) => a + b;
+
+console.log(sum(5, 3));
+
+
+/ EX5
+
+function kgToGrams(kg) {
+  return kg * 1000;
+}
+
+console.log(kgToGrams(2));
+
+const kgToGrams2 = function(kg) {
+  return kg * 1000;
+};
+
+console.log(kgToGrams2(3));
+
+const kgToGrams3 = kg => kg * 1000;
+
+console.log(kgToGrams3(4));
+
+
+/ EX6
+
+(function(children, partner, location, job) {
+  const sentence = `You will be a ${job} in ${location}, and married to ${partner} with ${children} kids.`;
+  document.body.innerHTML += `<p>${sentence}</p>`;
+})(3, "Eyal", "Jerusalem", "Web developer");
+
+
+/ EX7
+
+(function(name) {
+  const nav = document.createElement("div");
+  nav.textContent = `Welcome ${name}`;
+  document.body.prepend(nav);
+})("Chloe");
+
+
+/ EX8
+
+function makeJuice(size) {
+
+  let ingredients = [];
+
+  function addIngredients(ing1, ing2, ing3) {
+    ingredients.push(ing1, ing2, ing3);
+  }
+
+  function displayJuice() {
+    const sentence = `The client wants a ${size} juice, containing ${ingredients.join(", ")}`;
+    document.body.innerHTML += `<p>${sentence}</p>`;
+  }
+
+  addIngredients("apple", "banana", "orange");
+  addIngredients("mango", "kiwi", "pineapple");
+
+  displayJuice();
+}
+
+makeJuice("large");
