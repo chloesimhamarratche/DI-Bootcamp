@@ -1,0 +1,28 @@
+function isAnagram(a, b) {
+
+  a = a.toLowerCase();
+  b = b.toLowerCase();
+
+  a = a.replaceAll(" ", "");
+  b = b.replaceAll(" ", "");
+
+  let arr1 = a.split("");
+  let arr2 = b.split("");
+
+  arr1.sort();
+  arr2.sort();
+
+  let word1 = arr1.join("");
+  let word2 = arr2.join("");
+
+  if (word1 === word2) {
+    return true;
+  } else {
+    return false;
+  }
+
+}
+
+
+console.log(isAnagram("Astronomer", "Moon starer"));
+console.log(isAnagram("Hello", "World"));
