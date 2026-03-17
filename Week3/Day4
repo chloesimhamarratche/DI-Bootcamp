@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RoboFriends</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: purple;
+      text-align: center;
+    }
+
+    h1 {
+      color: lightgreen;
+    }
+
+    #search {
+      padding: 10px;
+      width: 200px;
+      margin-bottom: 20px;
+    }
+
+    #container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .card {
+      background: turquoise;
+      padding: 20px;
+      border-radius: 10px;
+      width: 200px;
+    }
+
+    img {
+      width: 150px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>ROBOFRIENDS</h1>
+
+  <input type="text" id="search" placeholder="Search robots">
+
+  <div id="container"></div>
+
+  <script>
+
+    const robots = [
+      {id:1,name:"Leanne Graham",email:"Sincere@april.biz",image:"https://robohash.org/1?200x200"},
+      {id:2,name:"Ervin Howell",email:"Shanna@melissa.tv",image:"https://robohash.org/2?200x200"},
+      {id:3,name:"Clementine Bauch",email:"Nathan@yesenia.net",image:"https://robohash.org/3?200x200"},
+      {id:4,name:"Patricia Lebsack",email:"Julianne.OConner@kory.org",image:"https://robohash.org/4?200x200"},
+      {id:5,name:"Chelsey Dietrich",email:"Lucio_Hettinger@annie.ca",image:"https://robohash.org/5?200x200"},
+      {id:6,name:"Mrs. Dennis Schulist",email:"Karley_Dach@jasper.info",image:"https://robohash.org/6?200x200"},
+      {id:7,name:"Kurtis Weissnat",email:"Telly.Hoeger@billy.biz",image:"https://robohash.org/7?200x200"},
+      {id:8,name:"Nicholas Runolfsdottir V",email:"Sherwood@rosamond.me",image:"https://robohash.org/8?200x200"},
+      {id:9,name:"Glenna Reichert",email:"Chaim_McDermott@dana.io",image:"https://robohash.org/9?200x200"},
+      {id:10,name:"Clementina DuBuque",email:"Rey.Padberg@karina.biz",image:"https://robohash.org/10?200x200"}
+    ];
+
+    const container = document.getElementById("container");
+    const search = document.getElementById("search");
+
+    function displayRobots(list) {
+      container.innerHTML = "";
+
+      list.forEach(robot => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+          <img src="${robot.image}">
+          <h3>${robot.name}</h3>
+          <p>${robot.email}</p>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    displayRobots(robots);
+
+    search.addEventListener("input", function() {
+      const value = search.value.toLowerCase();
+
+      const filtered = robots.filter(robot =>
+        robot.name.toLowerCase().includes(value)
+      );
+
+      displayRobots(filtered);
+    });
+
+  </script>
+
+</body>
+</html>
