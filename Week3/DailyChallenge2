@@ -1,0 +1,37 @@
+class Video {
+  constructor(title, uploader, time) {
+    this.title = title;
+    this.uploader = uploader;
+    this.time = time;
+  }
+
+  watch() {
+    console.log(`${this.uploader} watched all ${this.time} seconds of ${this.title}!`);
+  }
+}
+
+
+const video1 = new Video("Funny Cats", "Chloe", 120);
+video1.watch();
+
+
+const video2 = new Video("Cooking Pasta", "Eyal", 300);
+video2.watch();
+
+
+const videoData = [
+  ["Travel Vlog", "Sarah", 200],
+  ["Gym Routine", "David", 180],
+  ["Makeup Tutorial", "Lea", 240],
+  ["Tech Review", "Noam", 150],
+  ["Music Clip", "Tom", 210]
+];
+
+const videos = [];
+
+videoData.forEach(v => {
+  const newVideo = new Video(v[0], v[1], v[2]);
+  videos.push(newVideo);
+});
+
+videos.forEach(v => v.watch());
