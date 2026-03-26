@@ -1,1 +1,105 @@
+//EX1
+const express = require("express");
+const app = express();
 
+app.get("/", (req, res) => {
+  res.send("Homepage");
+});
+
+app.get("/about", (req, res) => {
+  res.send("About us");
+});
+
+app.listen(3000, () => {
+  console.log("Server running on 3000");
+});
+
+
+//EX2 
+const express2 = require("express");
+const app2 = express2();
+app2.use(express2.json());
+
+let todos = [];
+
+app2.get("/todos", (req, res) => {
+  res.json(todos);
+});
+
+app2.post("/todos", (req, res) => {
+  const newTodo = { id: Date.now(), task: req.body.task };
+  todos.push(newTodo);
+  res.json(newTodo);
+});
+
+app2.put("/todos/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const todo = todos.find(t => t.id === id);
+  if (todo) {
+    todo.task = req.body.task;
+    res.json(todo);
+  } else {
+    res.status(404).send("Not found");
+  }
+});
+
+app2.delete("/todos/:id", (req, res) => {
+  const id = Number(req.params.id);
+  todos = todos.filter(t => t.id !== id);
+  res.send("Deleted");
+});
+
+app2.listen(4000, () => {
+  console.log("Todo API on 4000");
+});
+
+
+// EX3
+const express3 = require("express");
+const app3 = express3();
+app3.use(express3.json());
+
+let books = [];
+
+
+app3.get("/books", (req, res) => {
+  res.json(books);
+});
+
+app3.get("/books/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const book = books.find(b => b.id === id);
+  book ? res.json(book) : res.status(404).send("Not found");
+});
+
+app3.post("/books", (req, res) => {
+  const newBook = {
+    id: Date.now(),
+    title: req.body.title,
+    author: req.body.author
+  };
+  books.push(newBook);
+  res.json(newBook);
+});
+
+app3.put("/books/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const book = books.find(b => b.id === id);
+  if (book) {
+    book.title = req.body.title;
+    book.author = req.body.author;
+    res.json(book);
+  } else {
+    res.status(404).send("Not found");
+  }
+});
+
+app3.delete("/books/:id", (req, res) => {
+  const id = Number(req.params.id);
+  books = books.filter(b => b.id !== id);
+  res.send("Deleted");
+});
+
+app3.listen(5000, () => {
+  console.log("Books API on 5000");
+});
