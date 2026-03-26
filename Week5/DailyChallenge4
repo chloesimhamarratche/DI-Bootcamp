@@ -1,1 +1,64 @@
+const express = require("express");
+const app = express();
+app.use(express.json());
 
+let score = 0;
+
+const emojis = [
+  { emoji: "😀", name: "Smile" },
+  { emoji: "🐶", name: "Dog" },
+  { emoji: "🌮", name: "Taco" }
+];
+
+function getQuestion() {
+  const correct = emojis[Math.floor(Math.random() * emojis.length)];
+
+  let options = [correct.name];
+
+  while (options.length < 3) {
+    const random = emojis[Math.floor(Math.random() * emojis.length)].name;
+    if (!options.includes(random)) options.push(random);
+  }
+
+  options.sort(() => Math.random() - 0.5);
+
+  return { emoji: correct.emoji, correct: correct.name, options };
+}
+
+
+app.get("/question", (req, res) => {
+  const q = getQuestion();
+  res.json(q);
+});
+
+
+app.post("/answer", (req, res) => {
+  const { answer, correct } = req.body;
+
+  if (answer === correct) {
+    score++;
+    res.json({ message: "Correct", score });
+  } else {
+    res.json({ message: "Wrong", score });
+  }
+});
+
+
+app.get("/score", (req, res) => {
+  res.json({ score });
+});
+
+
+let leaderboard = [];
+
+app.post("/save-score", (req, res) => {
+  const { name } = req.body;
+  leaderboard.push({ name, score });
+  leaderboard.sort((a, b) => b.score - a.score);
+  res.json(leaderboard);
+});
+
+
+app.listen(3000, () => {
+  console.log("Server running on 3000");
+});
