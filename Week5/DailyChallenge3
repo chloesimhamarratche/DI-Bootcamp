@@ -1,1 +1,34 @@
+//1
+function greet(name) {
+  return `Hello ${name}`;
+}
 
+
+//2
+import chalk from "chalk";
+
+function colorfulMessage() {
+  console.log(chalk.green("Welcome !"));
+}
+
+
+//3
+import fs from "fs";
+
+function readFileContent() {
+  fs.writeFileSync("file-data.txt", "Hello file");
+  const data = fs.readFileSync("file-data.txt", "utf-8");
+  console.log(data);
+}
+
+
+//4
+function runAll() {
+  console.log(greet("Chloe"));
+  colorfulMessage();
+  readFileContent();
+}
+
+
+//all
+runAll();
