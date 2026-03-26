@@ -1,1 +1,79 @@
 
+// EX1
+console.log("Hello, World!");
+
+
+// EX2
+let age: number = 21;
+let name: string = "Chloe";
+
+console.log(age);
+console.log(name);
+
+
+// EX3
+let id: string | number;
+
+
+// EX4
+function checkNumber(num: number): string {
+  if (num > 0) {
+    return "positive";
+  } else if (num < 0) {
+    return "negative";
+  } else {
+    return "zero";
+  }
+}
+
+
+// EX5
+function getDetails(name: string, age: number): [string, number, string] {
+  return [name, age, `Hello, ${name}! You are ${age} years old.`];
+}
+
+
+// EX6
+type Person = {
+  name: string;
+  age: number;
+};
+
+function createPerson(name: string, age: number): Person {
+  return {
+    name: name,
+    age: age
+  };
+}
+
+
+// EX7
+const input = document.getElementById("myInput") as HTMLInputElement;
+input.value = "Hello";
+
+
+// EX8
+function getAction(role: string): string {
+  switch (role) {
+    case "admin":
+      return "Manage users and settings";
+    case "editor":
+      return "Edit content";
+    case "viewer":
+      return "View content";
+    case "guest":
+      return "Limited access";
+    default:
+      return "Invalid role";
+  }
+}
+
+
+// EX9
+function greet(name?: string): string {
+  if (name) {
+    return `Hello, ${name}`;
+  } else {
+    return "Hello, guest";
+  }
+}
