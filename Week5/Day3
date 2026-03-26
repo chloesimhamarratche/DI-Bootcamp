@@ -1,0 +1,94 @@
+
+//EX1
+const products = [
+  { name: "Phone", price: 1000 },
+  { name: "Shoes", price: 200 }
+];
+
+function findProduct(name) {
+  return products.find(p => p.name === name);
+}
+
+
+//EX2
+const people = [
+  { name: "Chloe", age: 21 },
+  { name: "Anna", age: 25 }
+];
+
+function averageAge(arr) {
+  const total = arr.reduce((sum, p) => sum + p.age, 0);
+  return total / arr.length;
+}
+
+
+//EX3
+import fs from "fs";
+
+function readWriteFile() {
+  fs.writeFileSync("test.txt", "Hello");
+  const data = fs.readFileSync("test.txt", "utf-8");
+  return data;
+}
+
+
+//EX4
+class Todo {
+  constructor() {
+    this.tasks = [];
+  }
+
+  add(task) {
+    this.tasks.push({ task, done: false });
+  }
+
+  complete(i) {
+    this.tasks[i].done = true;
+  }
+
+  list() {
+    return this.tasks;
+  }
+}
+
+
+//EX5
+import _ from "lodash";
+
+function add(a, b) {
+  return a + b;
+}
+
+function sumArray(arr) {
+  return _.sum(arr);
+}
+
+
+//EX6
+import chalk from "chalk";
+
+function showMessages() {
+  console.log(chalk.blue("Hello"));
+  console.log(chalk.red("Error"));
+}
+
+
+//EX7
+function copyFile() {
+  fs.writeFileSync("source.txt", "Hello world");
+  const data = fs.readFileSync("source.txt", "utf-8");
+  fs.writeFileSync("copy.txt", data);
+}
+
+
+//EXPORT
+export {
+  findProduct,
+  averageAge,
+  readWriteFile,
+  Todo,
+  add,
+  sumArray,
+  showMessages,
+  copyFile
+};
