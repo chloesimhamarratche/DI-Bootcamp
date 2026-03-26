@@ -1,1 +1,42 @@
+type User = {
+  type: "user";
+  name: string;
+  age: number;
+};
 
+type Product = {
+  type: "product";
+  id: number;
+  price: number;
+};
+
+type Order = {
+  type: "order";
+  orderId: string;
+  amount: number;
+};
+
+type Data = User | Product | Order;
+
+
+function handleData(data: Data[]): string[] {
+  return data.map(item => {
+
+    if (item.type === "user") {
+      return "User: " + item.name + ", age " + item.age;
+    }
+
+    else if (item.type === "product") {
+      return "Product ID: " + item.id + ", price " + item.price;
+    }
+
+    else if (item.type === "order") {
+      return "Order: " + item.orderId + ", amount " + item.amount;
+    }
+
+    else {
+      return "Unknown type";
+    }
+
+  });
+}
