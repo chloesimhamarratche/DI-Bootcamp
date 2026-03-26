@@ -1,1 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Currency Converter</title>
+</head>
 
+<body>
+
+  <h2>Currency Converter</h2>
+
+  <p>From:</p>
+  <select id="from"></select>
+
+  <p>To:</p>
+  <select id="to"></select>
+
+  <p>Amount:</p>
+  <input type="number" id="amount" value="1">
+
+  <br><br>
+  <button id="convert">Convert</button>
+  <button id="switch">Switch</button>
+
+  <h3 id="result"></h3>
+
+  <script>
+    const fromSelect = document.getElementById("from");
+    const toSelect = document.getElementById("to");
+    const result = document.getElementById("result");
+
+    const API_KEY = "0807f48c395e4b4a3eac7cc4";
+
+    // charger les monnaies
+    async function loadCurrencies() {
+      try {
+        const res = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/codes`);
+        const data = await res.json();
+
+        if (data.result === "error") {
+          result.textContent = "API error";
+          return;
+        }
+
+        data.supported_codes.forEach(currency => {
+          let opt1 = document.createElement("option");
+          opt1.value = currency[0];
+          opt1.textContent = currency[0];
+
+          let opt2 = opt1.cloneNode(true);
+
+          fromSelect.appendChild(opt1);
+          toSelect.appendChild(opt2);
+        });
+
+      } catch (err) {
+        result.textContent = "Error loading currencies";
+      }
+    }
+
+    loadCurrencies();
+
+    // convertir
+    document.getElementById("convert").addEventListener("click", async () => {
+      const from = fromSelect.value;
+      const to = toSelect.value;
+      const amount = document.getElementById("amount").value;
+
+      if (!from || !to) {
+        result.textContent = "Choose currencies";
+        return;
+      }
+
+      try {
+        const res = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/pair/${from}/${to}/${amount}`);
+        const data = await res.json();
+
+        if (data.result === "error") {
+          result.textContent = "Conversion error";
+          return;
+        }
+
+        result.textContent = data.conversion_result + " " + to;
+
+      } catch (err) {
+        result.textContent = "Error";
+      }
+    });
+
+    // switch
+    document.getElementById("switch").addEventListener("click", () => {
+      let temp = fromSelect.value;
+      fromSelect.value = toSelect.value;
+      toSelect.value = temp;
+    });
+  </script>
+
+</body>
+</html>
