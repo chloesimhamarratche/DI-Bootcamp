@@ -1,1 +1,88 @@
+// EX1 
 
+type Person = {
+  name: string;
+  age: number;
+};
+
+type Address = {
+  street: string;
+  city: string;
+};
+
+type PersonWithAddress = Person & Address;
+
+const person1: PersonWithAddress = {
+  name: "Chloe",
+  age: 21,
+  street: "Herzl",
+  city: "Tel Aviv"
+};
+
+
+
+//EX2
+
+function describeValue(value: number | string): string {
+  if (typeof value === "number") {
+    return "This is a number";
+  } else {
+    return "This is a string";
+  }
+}
+
+
+
+//EX3
+
+let someValue: any = "hello";
+let strValue: string = someValue as string;
+
+
+
+//EX4
+
+function getFirstElement(arr: (number | string)[]): string {
+  return arr[0] as string;
+}
+
+
+
+// EX5
+
+function logLength<T extends { length: number }>(param: T): void {
+  console.log(param.length);
+}
+
+
+
+
+// EX6 
+
+type Person2 = {
+  name: string;
+  age: number;
+};
+
+type Job = {
+  position: string;
+  department: string;
+};
+
+type Employee = Person2 & Job;
+
+function describeEmployee(emp: Employee): string {
+  if (emp.position === "Manager") {
+    return emp.name + " is a Manager";
+  } else {
+    return emp.name + " is a Developer";
+  }
+}
+
+
+
+// EX7
+
+function formatInput<T extends { toString(): string }>(input: T): string {
+  return input.toString();
+}
