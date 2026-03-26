@@ -1,13 +1,11 @@
--- EX1
-
 CREATE TABLE items (
-    id SERIAL PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
-    price INTEGER
+    price INT
 );
 
 CREATE TABLE customers (
-    id SERIAL PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100),
     last_name VARCHAR(100)
 );
@@ -34,4 +32,4 @@ SELECT * FROM customers WHERE last_name = 'Smith';
 
 SELECT * FROM customers WHERE last_name = 'Jones';
 
-SELECT * FROM customers WHERE first_name != 'Scott';
+SELECT * FROM customers WHERE first_name <> 'Scott';
