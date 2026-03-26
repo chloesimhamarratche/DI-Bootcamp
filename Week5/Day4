@@ -1,1 +1,75 @@
+//EX1
+const express = require("express");
+const app = express();
+app.use(express.json());
 
+let posts = [
+  { id: 1, title: "Post 1", content: "Hello" },
+  { id: 2, title: "Post 2", content: "World" }
+];
+
+app.get("/posts", (req, res) => {
+  res.json(posts);
+});
+
+app.get("/posts/:id", (req, res) => {
+  const post = posts.find(p => p.id == req.params.id);
+  post ? res.json(post) : res.status(404).send("Not found");
+});
+
+app.post("/posts", (req, res) => {
+  const newPost = { id: posts.length + 1, ...req.body };
+  posts.push(newPost);
+  res.status(201).json(newPost);
+});
+
+app.put("/posts/:id", (req, res) => {
+  const post = posts.find(p => p.id == req.params.id);
+  if (!post) return res.status(404).send("Not found");
+  Object.assign(post, req.body);
+  res.json(post);
+});
+
+app.delete("/posts/:id", (req, res) => {
+  posts = posts.filter(p => p.id != req.params.id);
+  res.send("Deleted");
+});
+
+app.listen(3000, () => console.log("Server 3000"));
+
+
+
+//EX
+let books = [
+  { id: 1, title: "Book1", author: "A", publishedYear: 2020 },
+  { id: 2, title: "Book2", author: "B", publishedYear: 2021 }
+];
+
+app.get("/api/books", (req, res) => {
+  res.json(books);
+});
+
+app.get("/api/books/:id", (req, res) => {
+  const book = books.find(b => b.id == req.params.id);
+  book ? res.json(book) : res.status(404).send("Not found");
+});
+
+app.post("/api/books", (req, res) => {
+  const newBook = { id: books.length + 1, ...req.body };
+  books.push(newBook);
+  res.status(201).json(newBook);
+});
+
+
+// EX3 
+const axios = require("axios");
+
+app.get("/external-posts", async (req, res) => {
+  try {
+    const response = await axios.get("https://jsonplaceholder.typicode.com/posts");
+    console.log("data fetched");
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).send("error");
+  }
+});
