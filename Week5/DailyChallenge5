@@ -1,1 +1,74 @@
 
+const express = require("express");
+const app = express();
+app.use(express.json());
+
+const triviaQuestions = [
+  {
+    question: "What is the capital of France?",
+    answer: "Paris",
+  },
+  {
+    question: "Which planet is known as the Red Planet?",
+    answer: "Mars",
+  },
+  {
+    question: "What is the largest mammal in the world?",
+    answer: "Blue whale",
+  },
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+
+app.get("/quiz", (req, res) => {
+  currentQuestion = 0;
+  score = 0;
+  res.json({
+    question: triviaQuestions[currentQuestion].question,
+  });
+});
+
+
+app.post("/quiz", (req, res) => {
+  const userAnswer = req.body.answer;
+
+  const correctAnswer = triviaQuestions[currentQuestion].answer;
+
+  let feedback;
+
+  if (userAnswer === correctAnswer) {
+    score++;
+    feedback = "Correct!";
+  } else {
+    feedback = "Wrong!";
+  }
+
+  currentQuestion++;
+
+  if (currentQuestion < triviaQuestions.length) {
+    res.json({
+      feedback: feedback,
+      nextQuestion: triviaQuestions[currentQuestion].question,
+    });
+  } else {
+    res.json({
+      feedback: feedback,
+      message: "Quiz finished",
+      finalScore: score,
+    });
+  }
+});
+
+
+app.get("/quiz/score", (req, res) => {
+  res.json({
+    score: score,
+    total: triviaQuestions.length,
+  });
+});
+
+app.listen(3000, () => {
+  console.log("Quiz running on port 3000");
+});
