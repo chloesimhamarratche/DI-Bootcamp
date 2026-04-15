@@ -1,0 +1,79 @@
+import { useState } from "react";
+
+function App() {
+
+  const [username, setUsername] = useState("");
+  const [age, setAge] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [text, setText] = useState("The content of a textarea goes in the value attribute");
+  const [car, setCar] = useState("Volvo");
+
+  let header = "";
+  if (username && age) {
+    header = <h1>Hello {username} {age}</h1>;
+  }
+
+  const handleName = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const handleAge = (e) => {
+    setAge(e.target.value);
+
+    if (isNaN(e.target.value)) {
+      setErrorMessage("Your age must be a number");
+    } else {
+      setErrorMessage("");
+    }
+  };
+
+  const mySubmitHandler = (e) => {
+    e.preventDefault();
+    alert("You are submitting " + username);
+  };
+
+  const handleText = (e) => {
+    setText(e.target.value);
+  };
+
+  const handleCar = (e) => {
+    setCar(e.target.value);
+  };
+
+  return (
+    <div>
+
+      {header}
+
+      <form onSubmit={mySubmitHandler}>
+        <p>Enter your name:</p>
+        <input type="text" name="username" onChange={handleName} />
+
+        <p>Enter your age:</p>
+        <input type="text" name="age" onChange={handleAge} />
+
+        <p style={{color: "red"}}>{errorMessage}</p>
+
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+
+      <br />
+
+      <textarea value={text} onChange={handleText} />
+
+      <br /><br />
+
+      <select value={car} onChange={handleCar}>
+        <option value="Ford">Ford</option>
+        <option value="Volvo">Volvo</option>
+        <option value="Fiat">Fiat</option>
+      </select>
+
+      <p>Selected car: {car}</p>
+
+    </div>
+  );
+}
+
+export default App;
