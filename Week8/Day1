@@ -1,0 +1,63 @@
+// EX1
+import React, { useState } from "react";
+
+const quotes = [
+  { quote: "From error to error one discovers the entire truth.", author: "Freud" },
+  { quote: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
+  { quote: "Do what you can, with what you have.", author: "Roosevelt" },
+  { quote: "Stay hungry, stay foolish.", author: "Steve Jobs" }
+];
+
+export default function App() {
+  const [index, setIndex] = useState(0);
+  const [color, setColor] = useState("#2c3e50");
+
+  const getRandom = () => {
+    let newIndex = Math.floor(Math.random() * quotes.length);
+    while (newIndex === index) {
+      newIndex = Math.floor(Math.random() * quotes.length);
+    }
+
+    const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+
+    setIndex(newIndex);
+    setColor(randomColor);
+  };
+
+  return (
+    <div
+      style={{
+        backgroundColor: color,
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <div
+        style={{
+          background: "#fff",
+          padding: "30px",
+          borderRadius: "10px",
+          width: "400px",
+          textAlign: "center"
+        }}
+      >
+        <h2 style={{ color }}>{quotes[index].quote}</h2>
+        <p>- {quotes[index].author} -</p>
+        <button
+          onClick={getRandom}
+          style={{
+            marginTop: "20px",
+            padding: "10px",
+            backgroundColor: color,
+            color: "#fff",
+            border: "none"
+          }}
+        >
+          New Quote
+        </button>
+      </div>
+    </div>
+  );
+}
