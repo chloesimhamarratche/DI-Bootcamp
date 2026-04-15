@@ -1,0 +1,109 @@
+// EX1
+import { configureStore } from "@reduxjs/toolkit";
+import ageReducer from "./ageSlice";
+
+export const store = configureStore({
+  reducer: {
+    age: ageReducer
+  }
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+// EX2
+import { createSlice } from "@reduxjs/toolkit";
+import { ageUpAsync, ageDownAsync } from "./thunks";
+
+type AgeState = {
+  value: number;
+  loading: boolean;
+};
+
+const initialState: AgeState = {
+  value: 20,
+  loading: false
+};
+
+const ageSlice = createSlice({
+  name: "age",
+  initialState,
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(ageUpAsync.pending, state => {
+        state.loading = true;
+      })
+      .addCase(ageUpAsync.fulfilled, state => {
+        state.value += 1;
+        state.loading = false;
+      })
+      .addCase(ageDownAsync.pending, state => {
+        state.loading = true;
+      })
+      .addCase(ageDownAsync.fulfilled, state => {
+        state.value -= 1;
+        state.loading = false;
+      });
+  }
+});
+
+export default ageSlice.reducer;
+
+// EX3
+import { createAsyncThunk } from "@reduxjs/toolkit";
+
+export const ageUpAsync = createAsyncThunk("age/up", async () => {
+  await new Promise(res => setTimeout(res, 1000));
+});
+
+export const ageDownAsync = createAsyncThunk("age/down", async () => {
+  await new Promise(res => setTimeout(res, 1000));
+});
+
+// EX4
+import { useSelector } from "react-redux";
+import { RootState } from "./store";
+
+export const AgeDisplay = () => {
+  const { value, loading } = useSelector((state: RootState) => state.age);
+
+  return (
+    <div>
+      {loading ? <p>Loading...</p> : <h2>{value}</h2>}
+    </div>
+  );
+};
+
+// EX5
+import { useDispatch } from "react-redux";
+import { ageUpAsync, ageDownAsync } from "./thunks";
+import { AppDispatch } from "./store";
+
+export const AgeControls = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  return (
+    <div>
+      <button onClick={() => dispatch(ageUpAsync())}>Age Up</button>
+      <button onClick={() => dispatch(ageDownAsync())}>Age Down</button>
+    </div>
+  );
+};
+
+// APP
+import React from "react";
+import { Provider } from "react-redux";
+import { store } from "./store";
+import { AgeDisplay } from "./AgeDisplay";
+import { AgeControls } from "./AgeControls";
+
+export default function App() {
+  return (
+    <Provider store={store}>
+      <h1>Age Tracker</h1>
+      <AgeDisplay />
+      <AgeControls />
+    </Provider>
+  );
+}
