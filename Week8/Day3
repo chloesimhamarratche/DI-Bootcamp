@@ -1,0 +1,145 @@
+// EX1
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+type Todo = {
+  id: number;
+  text: string;
+  completed: boolean;
+};
+
+type TodoState = {
+  todos: Todo[];
+};
+
+const initialState: TodoState = {
+  todos: []
+};
+
+const todoSlice = createSlice({
+  name: "todos",
+  initialState,
+  reducers: {
+    addTodo: (state, action: PayloadAction<string>) => {
+      state.todos.push({
+        id: Date.now(),
+        text: action.payload,
+        completed: false
+      });
+    },
+    toggleTodo: (state, action: PayloadAction<number>) => {
+      const todo = state.todos.find(t => t.id === action.payload);
+      if (todo) todo.completed = !todo.completed;
+    },
+    removeTodo: (state, action: PayloadAction<number>) => {
+      state.todos = state.todos.filter(t => t.id !== action.payload);
+    }
+  }
+});
+
+export const { addTodo, toggleTodo, removeTodo } = todoSlice.actions;
+export default todoSlice.reducer;
+
+// EX2
+import { configureStore } from "@reduxjs/toolkit";
+import todoReducer from "./todoSlice";
+
+export const store = configureStore({
+  reducer: {
+    todos: todoReducer
+  }
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+// EX3
+import { useSelector } from "react-redux";
+import { RootState } from "./store";
+import TodoItem from "./TodoItem";
+
+export const TodoList = () => {
+  const todos = useSelector((state: RootState) => state.todos.todos);
+
+  return (
+    <div>
+      {todos.map(todo => (
+        <TodoItem key={todo.id} todo={todo} />
+      ))}
+    </div>
+  );
+};
+
+// EX4
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addTodo } from "./todoSlice";
+import { AppDispatch } from "./store";
+
+export const AddTodo = () => {
+  const [text, setText] = useState("");
+  const dispatch = useDispatch<AppDispatch>();
+
+  return (
+    <div>
+      <input value={text} onChange={e => setText(e.target.value)} />
+      <button
+        onClick={() => {
+          if (text) {
+            dispatch(addTodo(text));
+            setText("");
+          }
+        }}
+      >
+        Add
+      </button>
+    </div>
+  );
+};
+
+// EX5
+import { useDispatch } from "react-redux";
+import { toggleTodo, removeTodo } from "./todoSlice";
+import { AppDispatch } from "./store";
+
+type Props = {
+  todo: {
+    id: number;
+    text: string;
+    completed: boolean;
+  };
+};
+
+const TodoItem = ({ todo }: Props) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  return (
+    <div>
+      <span
+        onClick={() => dispatch(toggleTodo(todo.id))}
+        style={{ textDecoration: todo.completed ? "line-through" : "none" }}
+      >
+        {todo.text}
+      </span>
+      <button onClick={() => dispatch(removeTodo(todo.id))}>X</button>
+    </div>
+  );
+};
+
+export default TodoItem;
+
+// APP
+import React from "react";
+import { Provider } from "react-redux";
+import { store } from "./store";
+import { AddTodo } from "./AddTodo";
+import { TodoList } from "./TodoList";
+
+export default function App() {
+  return (
+    <Provider store={store}>
+      <h1>Todo App</h1>
+      <AddTodo />
+      <TodoList />
+    </Provider>
+  );
+}
