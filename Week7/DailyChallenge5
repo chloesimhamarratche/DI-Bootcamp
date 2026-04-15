@@ -1,0 +1,101 @@
+// EX1
+import React, { useReducer, useContext, createContext, useRef, useState } from "react";
+
+const TaskContext = createContext();
+
+const initialState = {
+  tasks: [
+    { id: 1, text: "Task 1", done: false },
+    { id: 2, text: "Task 2", done: true }
+  ],
+  filter: "all"
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "EDIT_TASK":
+      return {
+        ...state,
+        tasks: state.tasks.map(t =>
+          t.id === action.id ? { ...t, text: action.text } : t
+        )
+      };
+    case "TOGGLE_TASK":
+      return {
+        ...state,
+        tasks: state.tasks.map(t =>
+          t.id === action.id ? { ...t, done: !t.done } : t
+        )
+      };
+    case "SET_FILTER":
+      return { ...state, filter: action.filter };
+    default:
+      return state;
+  }
+}
+
+function Provider({ children }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <TaskContext.Provider value={{ state, dispatch }}>
+      {children}
+    </TaskContext.Provider>
+  );
+}
+
+function Task() {
+  const { state, dispatch } = useContext(TaskContext);
+  const [editId, setEditId] = useState(null);
+  const inputRef = useRef();
+
+  const filtered = state.tasks.filter(t => {
+    if (state.filter === "done") return t.done;
+    if (state.filter === "active") return !t.done;
+    return true;
+  });
+
+  return (
+    <div>
+      <button onClick={() => dispatch({ type: "SET_FILTER", filter: "all" })}>All</button>
+      <button onClick={() => dispatch({ type: "SET_FILTER", filter: "done" })}>Done</button>
+      <button onClick={() => dispatch({ type: "SET_FILTER", filter: "active" })}>Active</button>
+
+      {filtered.map(t => (
+        <div key={t.id}>
+          {editId === t.id ? (
+            <>
+              <input ref={inputRef} defaultValue={t.text} />
+              <button
+                onClick={() => {
+                  dispatch({
+                    type: "EDIT_TASK",
+                    id: t.id,
+                    text: inputRef.current.value
+                  });
+                  setEditId(null);
+                }}
+              >
+                Save
+              </button>
+            </>
+          ) : (
+            <>
+              <span onClick={() => dispatch({ type: "TOGGLE_TASK", id: t.id })}>
+                {t.text} {t.done ? "✔" : ""}
+              </span>
+              <button onClick={() => setEditId(t.id)}>Edit</button>
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Provider>
+      <Task />
+    </Provider>
+  );
+}
