@@ -1,0 +1,68 @@
+// EX1 (server/server.js)
+const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+app.get("/api/hello", (req, res) => {
+  res.send("Hello From Express");
+});
+
+app.post("/api/world", (req, res) => {
+  console.log(req.body);
+  res.send(`I received your POST request. This is what you sent me: ${req.body.post}`);
+});
+
+app.listen(5000);
+
+
+// EX2 (client/src/App.js)
+import React from "react";
+
+class App extends React.Component {
+  state = {
+    message: "",
+    post: "",
+    response: ""
+  };
+
+  async componentDidMount() {
+    const res = await fetch("/api/hello");
+    const data = await res.text();
+    this.setState({ message: data });
+  }
+
+  handleChange = (e) => {
+    this.setState({ post: e.target.value });
+  };
+
+  handleSubmit = async (e) => {
+    e.preventDefault();
+    const res = await fetch("/api/world", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ post: this.state.post })
+    });
+    const data = await res.text();
+    this.setState({ response: data });
+  };
+
+  render() {
+    return (
+      <div>
+        <h1>{this.state.message}</h1>
+
+        <form onSubmit={this.handleSubmit}>
+          <input onChange={this.handleChange} />
+          <button>Submit</button>
+        </form>
+
+        <p>{this.state.response}</p>
+      </div>
+    );
+  }
+}
+
+export default App;
