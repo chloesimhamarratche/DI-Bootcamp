@@ -1,0 +1,85 @@
+import React, { useState } from "react";
+
+function App() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    age: "",
+    gender: "",
+    destination: "",
+    nutsFree: false,
+    lactoseFree: false,
+    vegan: false,
+  });
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  return (
+    <div>
+      <h1>Sample form</h1>
+
+      <form>
+        <input name="firstName" placeholder="First Name" onChange={handleChange} />
+        <br />
+
+        <input name="lastName" placeholder="Last Name" onChange={handleChange} />
+        <br />
+
+        <input name="age" type="number" placeholder="Age" onChange={handleChange} />
+        <br /><br />
+
+        <label>
+          <input type="radio" name="gender" value="Male" onChange={handleChange} /> Male
+        </label>
+
+        <label>
+          <input type="radio" name="gender" value="Female" onChange={handleChange} /> Female
+        </label>
+
+        <br /><br />
+
+        <select name="destination" onChange={handleChange}>
+          <option value="">Choose destination</option>
+          <option value="Japan">Japan</option>
+          <option value="Thailand">Thailand</option>
+          <option value="France">France</option>
+        </select>
+
+        <br /><br />
+
+        <label>
+          <input type="checkbox" name="nutsFree" onChange={handleChange} /> Nuts free
+        </label>
+        <br />
+
+        <label>
+          <input type="checkbox" name="lactoseFree" onChange={handleChange} /> Lactose free
+        </label>
+        <br />
+
+        <label>
+          <input type="checkbox" name="vegan" onChange={handleChange} /> Vegan
+        </label>
+      </form>
+
+      <h2>Entered information:</h2>
+
+      <p>Your name: {formData.firstName} {formData.lastName}</p>
+      <p>Your age: {formData.age}</p>
+      <p>Your gender: {formData.gender}</p>
+      <p>Your destination: {formData.destination}</p>
+
+      <p>Nuts free: {formData.nutsFree ? "Yes" : "No"}</p>
+      <p>Lactose free: {formData.lactoseFree ? "Yes" : "No"}</p>
+      <p>Vegan: {formData.vegan ? "Yes" : "No"}</p>
+    </div>
+  );
+}
+
+export default App;
