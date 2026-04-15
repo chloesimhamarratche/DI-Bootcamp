@@ -1,0 +1,203 @@
+// EX1
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+type Task = {
+  id: number;
+  text: string;
+};
+
+type PlannerState = {
+  tasksByDay: {
+    [date: string]: Task[];
+  };
+};
+
+const initialState: PlannerState = {
+  tasksByDay: {}
+};
+
+const plannerSlice = createSlice({
+  name: "planner",
+  initialState,
+  reducers: {
+    addTask: (
+      state,
+      action: PayloadAction<{ date: string; text: string }>
+    ) => {
+      const { date, text } = action.payload;
+      if (!state.tasksByDay[date]) state.tasksByDay[date] = [];
+      state.tasksByDay[date].push({
+        id: Date.now(),
+        text
+      });
+    },
+    editTask: (
+      state,
+      action: PayloadAction<{ date: string; id: number; text: string }>
+    ) => {
+      const { date, id, text } = action.payload;
+      const task = state.tasksByDay[date]?.find(t => t.id === id);
+      if (task) task.text = text;
+    },
+    deleteTask: (
+      state,
+      action: PayloadAction<{ date: string; id: number }>
+    ) => {
+      const { date, id } = action.payload;
+      state.tasksByDay[date] = state.tasksByDay[date]?.filter(
+        t => t.id !== id
+      );
+    }
+  }
+});
+
+export const { addTask, editTask, deleteTask } = plannerSlice.actions;
+export default plannerSlice.reducer;
+
+// EX2
+import { configureStore } from "@reduxjs/toolkit";
+import plannerReducer from "./plannerSlice";
+
+export const store = configureStore({
+  reducer: {
+    planner: plannerReducer
+  }
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+// EX3
+import { useState } from "react";
+
+export const Calendar = ({
+  setDate
+}: {
+  setDate: (d: string) => void;
+}) => {
+  const [value, setValue] = useState("");
+
+  return (
+    <input
+      type="date"
+      value={value}
+      onChange={e => {
+        setValue(e.target.value);
+        setDate(e.target.value);
+      }}
+    />
+  );
+};
+
+// EX4
+import { useSelector } from "react-redux";
+import { RootState } from "./store";
+import TaskItem from "./TaskItem";
+
+export const TaskList = ({ date }: { date: string }) => {
+  const tasks = useSelector(
+    (state: RootState) => state.planner.tasksByDay[date] || []
+  );
+
+  return (
+    <div>
+      {tasks.map(task => (
+        <TaskItem key={task.id} task={task} date={date} />
+      ))}
+    </div>
+  );
+};
+
+// EX5
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addTask } from "./plannerSlice";
+import { AppDispatch } from "./store";
+
+export const AddTask = ({ date }: { date: string }) => {
+  const [text, setText] = useState("");
+  const dispatch = useDispatch<AppDispatch>();
+
+  return (
+    <div>
+      <input value={text} onChange={e => setText(e.target.value)} />
+      <button
+        onClick={() => {
+          if (text && date) {
+            dispatch(addTask({ date, text }));
+            setText("");
+          }
+        }}
+      >
+        Add
+      </button>
+    </div>
+  );
+};
+
+// EX6
+import { useDispatch } from "react-redux";
+import { editTask, deleteTask } from "./plannerSlice";
+import { AppDispatch } from "./store";
+import { useState } from "react";
+
+const TaskItem = ({
+  task,
+  date
+}: {
+  task: { id: number; text: string };
+  date: string;
+}) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [edit, setEdit] = useState(false);
+  const [text, setText] = useState(task.text);
+
+  return (
+    <div>
+      {edit ? (
+        <>
+          <input value={text} onChange={e => setText(e.target.value)} />
+          <button
+            onClick={() => {
+              dispatch(editTask({ date, id: task.id, text }));
+              setEdit(false);
+            }}
+          >
+            Save
+          </button>
+        </>
+      ) : (
+        <>
+          <span>{task.text}</span>
+          <button onClick={() => setEdit(true)}>Edit</button>
+          <button onClick={() => dispatch(deleteTask({ date, id: task.id }))}>
+            X
+          </button>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default TaskItem;
+
+// APP
+import React, { useState } from "react";
+import { Provider } from "react-redux";
+import { store } from "./store";
+import { Calendar } from "./Calendar";
+import { AddTask } from "./AddTask";
+import { TaskList } from "./TaskList";
+
+export default function App() {
+  const [date, setDate] = useState("");
+
+  return (
+    <Provider store={store}>
+      <h1>Planner</h1>
+      <Calendar setDate={setDate} />
+      <AddTask date={date} />
+      <TaskList date={date} />
+    </Provider>
+  );
+}
