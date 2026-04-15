@@ -1,0 +1,152 @@
+import React from "react";
+
+class BuggyCounter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { counter: 0 };
+  }
+
+  handleClick = () => {
+    this.setState({ counter: this.state.counter + 1 });
+  };
+
+  render() {
+    if (this.state.counter === 5) {
+      throw new Error("I crashed!");
+    }
+
+    return (
+      <h1 onClick={this.handleClick}>
+        {this.state.counter}
+      </h1>
+    );
+  }
+}
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null, errorInfo: null };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    this.setState({
+      error: error,
+      errorInfo: errorInfo
+    });
+  }
+
+  render() {
+    if (this.state.errorInfo) {
+      return (
+        <div>
+          <h2>Something went wrong.</h2>
+          <details style={{ whiteSpace: "pre-wrap" }}>
+            {this.state.error && this.state.error.toString()}
+            <br />
+            {this.state.errorInfo.componentStack}
+          </details>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+
+class Lifecycle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { favoriteColor: "red" };
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ favoriteColor: "yellow" });
+    }, 2000);
+  }
+
+  shouldComponentUpdate() {
+    return true;
+  }
+
+  componentDidUpdate() {
+    console.log("after update");
+  }
+
+  getSnapshotBeforeUpdate() {
+    console.log("in getSnapshotBeforeUpdate");
+    return null;
+  }
+
+  render() {
+    return <h1>My Favorite Color is {this.state.favoriteColor}</h1>;
+  }
+}
+
+
+class Child extends React.Component {
+  componentWillUnmount() {
+    alert("The component named Header is about to be unmounted.");
+  }
+
+  render() {
+    return <h1>Hello World!</h1>;
+  }
+}
+
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { show: true };
+  }
+
+  deleteHeader = () => {
+    this.setState({ show: false });
+  };
+
+  render() {
+    return (
+      <div>
+
+        {/* ===== ERROR BOUNDARY SIMULATION ===== */}
+        <h2>Simulation 1</h2>
+        <ErrorBoundary>
+          <BuggyCounter />
+          <BuggyCounter />
+        </ErrorBoundary>
+
+        <h2>Simulation 2</h2>
+        <ErrorBoundary>
+          <BuggyCounter />
+        </ErrorBoundary>
+
+        <ErrorBoundary>
+          <BuggyCounter />
+        </ErrorBoundary>
+
+        <h2>Simulation 3</h2>
+        <BuggyCounter />
+
+        <hr />
+
+        {/* ===== LIFECYCLE ===== */}
+        <Lifecycle />
+
+        <hr />
+
+        {/* ===== UNMOUNT ===== */}
+        {this.state.show && <Child />}
+
+        <button onClick={this.deleteHeader}>
+          Delete Header
+        </button>
+
+      </div>
+    );
+  }
+}
+
+export default App;
