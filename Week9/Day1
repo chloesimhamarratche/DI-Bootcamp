@@ -1,0 +1,80 @@
+EX1
+Issues:
+- Vague
+- No audience
+- No format
+
+Prompt:
+Act as a LinkedIn content creator.
+Write a LinkedIn post about productivity for young professionals.
+Include 3 tips, a hook, and a call to action.
+Max 150 words.
+
+EX2
+Prompt:
+Act as a teacher.
+Summarize the article in 2 bullet points.
+Create 3 MCQ questions with 1 correct answer and 2 wrong answers.
+Use simple words.
+Format for slides.
+
+Why:
+- Clear instructions
+- Defined audience
+- Structured output
+
+EX3
+Role: YES → financial analyst
+Audience: YES → executives
+Purpose: YES → presentation summary
+Input: YES → report
+Format: YES → bullet points
+Constraints: YES → 3 points
+
+Prompt:
+Act as a financial analyst.
+Summarize the report for executives.
+Give 3 key points with numbers.
+Use bullet points.
+
+EX4
+Style: Structured
+
+Prompt:
+You are a support chatbot.
+Answer using:
+1. Greeting
+2. Problem
+3. Solution
+4. Help
+5. Closing
+
+Features:
+- Structure
+- Clarity
+
+Why:
+- Easy to follow
+- Consistent answers
+
+EX5
+Prompt:
+Write a product description.
+3 bullet points only.
+Max 50 words.
+Include battery life, fitness tracking, bluetooth.
+Friendly tone.
+
+EX6
+Prompt:
+Summarize the article.
+Use only given text.
+If missing info say not available.
+
+Strategies:
+- Use source only
+- Say if unsure
+
+Domains:
+- Healthcare
+- Legal
