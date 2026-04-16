@@ -1,0 +1,98 @@
+--EX1--
+!pip install -qU langgraph==1.0.5 langchain-google-genai==4.1.2 google-genai==1.56.0
+
+--EX2--
+import os
+from typing import Annotated, List, Literal
+from typing_extensions import TypedDict
+from langgraph.graph.message import add_messages
+
+class OrderState(TypedDict):
+    messages: Annotated[List, add_messages]
+    order: List[str]
+    finished: bool
+
+BARISTABOT_SYSINT = (
+"system",
+"You are a BaristaBot. Help user order drinks from menu and confirm before placing order."
+)
+
+WELCOME_MSG = "Welcome to BaristaBot. What would you like to order?"
+
+--EX3--
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.messages import AIMessage
+
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-latest")
+
+def chatbot(state: OrderState) -> OrderState:
+    if state["messages"]:
+        response = llm.invoke([BARISTABOT_SYSINT] + state["messages"])
+    else:
+        response = AIMessage(content=WELCOME_MSG)
+    return {"messages": [response]}
+
+--EX4--
+from langchain_core.messages.ai import AIMessage
+
+def human_node(state: OrderState) -> OrderState:
+    last = state["messages"][-1]
+    print(last.content)
+    user = input("User: ")
+    if user in ["q","quit","exit"]:
+        state["finished"] = True
+    return state | {"messages": [("user", user)]}
+
+--EX5--
+from langchain_core.tools import tool
+
+@tool
+def get_menu() -> str:
+    return "Espresso, Latte, Cappuccino, Tea"
+
+--EX6--
+from langgraph.prebuilt import ToolNode
+
+tools = [get_menu]
+tool_node = ToolNode(tools)
+llm_with_tools = llm.bind_tools(tools)
+
+def chatbot_tools(state: OrderState) -> OrderState:
+    if state["messages"]:
+        response = llm_with_tools.invoke([BARISTABOT_SYSINT] + state["messages"])
+    else:
+        response = AIMessage(content=WELCOME_MSG)
+    return {"messages": [response]}
+
+--EX7--
+def route_tools(state: OrderState) -> str:
+    msg = state["messages"][-1]
+    if hasattr(msg, "tool_calls") and len(msg.tool_calls) > 0:
+        return "tools"
+    return "human"
+
+def exit_route(state: OrderState) -> str:
+    if state.get("finished", False):
+        return "__end__"
+    return "chatbot"
+
+--EX8--
+from langgraph.graph import StateGraph, START, END
+
+graph = StateGraph(OrderState)
+
+graph.add_node("chatbot", chatbot_tools)
+graph.add_node("human", human_node)
+graph.add_node("tools", tool_node)
+
+graph.add_conditional_edges("chatbot", route_tools)
+graph.add_conditional_edges("human", exit_route)
+
+graph.add_edge("tools", "chatbot")
+graph.add_edge(START, "chatbot")
+
+app = graph.compile()
+
+--EX9--
+state = app.invoke({"messages": [], "order": [], "finished": False})
+print(state)
