@@ -1,0 +1,366 @@
+const express = require("express")
+const jwt = require("jsonwebtoken")
+const bcrypt = require("bcrypt")
+const bodyParser = require("body-parser")
+const cookieParser = require("cookie-parser")
+
+const app = express()
+const PORT = 3000
+
+app.use(bodyParser.json())
+app.use(cookieParser())
+
+const users = []
+const revokedRefreshTokens = []
+const loginAttempts = {}
+
+const ACCESS_SECRET = "access_secret_key"
+const REFRESH_SECRET = "refresh_secret_key"
+
+EX1:
+function createAccessToken(user) {
+  return jwt.sign(
+    {
+      id: user.id,
+      username: user.username
+    },
+    ACCESS_SECRET,
+    {
+      expiresIn: "1h"
+    }
+  )
+}
+
+EX2:
+function createRefreshToken(user) {
+  return jwt.sign(
+    {
+      id: user.id,
+      username: user.username
+    },
+    REFRESH_SECRET,
+    {
+      expiresIn: "7d"
+    }
+  )
+}
+
+EX3:
+function validateRegister(req, res, next) {
+  const { username, password, email } = req.body
+
+  if (!username || !password || !email) {
+    return res.status(400).json({
+      message: "Username, email and password are required"
+    })
+  }
+
+  if (username.length < 3) {
+    return res.status(400).json({
+      message: "Username must contain at least 3 characters"
+    })
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({
+      message: "Password must contain at least 6 characters"
+    })
+  }
+
+  const emailExists = users.find(user => user.email === email)
+  const usernameExists = users.find(user => user.username === username)
+
+  if (emailExists || usernameExists) {
+    return res.status(409).json({
+      message: "User already exists"
+    })
+  }
+
+  next()
+}
+
+EX4:
+function limitLoginAttempts(req, res, next) {
+  const ip = req.ip
+  const now = Date.now()
+
+  if (!loginAttempts[ip]) {
+    loginAttempts[ip] = {
+      count: 1,
+      firstAttempt: now
+    }
+
+    return next()
+  }
+
+  const timePassed = now - loginAttempts[ip].firstAttempt
+
+  if (timePassed > 15 * 60 * 1000) {
+    loginAttempts[ip] = {
+      count: 1,
+      firstAttempt: now
+    }
+
+    return next()
+  }
+
+  if (loginAttempts[ip].count >= 5) {
+    return res.status(429).json({
+      message: "Too many login attempts. Try again later"
+    })
+  }
+
+  loginAttempts[ip].count++
+  next()
+}
+
+EX5:
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers.authorization
+  const tokenFromHeader = authHeader && authHeader.split(" ")[1]
+  const tokenFromCookie = req.cookies.accessToken
+  const token = tokenFromHeader || tokenFromCookie
+
+  if (!token) {
+    return res.status(401).json({
+      message: "Access token required"
+    })
+  }
+
+  jwt.verify(token, ACCESS_SECRET, (error, decodedUser) => {
+    if (error) {
+      return res.status(403).json({
+        message: "Invalid or expired token"
+      })
+    }
+
+    req.user = decodedUser
+    next()
+  })
+}
+
+EX6:
+app.post("/register", validateRegister, async (req, res) => {
+  const { username, password, email } = req.body
+
+  const hashedPassword = await bcrypt.hash(password, 10)
+
+  const newUser = {
+    id: users.length + 1,
+    username,
+    email,
+    password: hashedPassword,
+    bio: "",
+    createdAt: new Date()
+  }
+
+  users.push(newUser)
+
+  const accessToken = createAccessToken(newUser)
+  const refreshToken = createRefreshToken(newUser)
+
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 60 * 60 * 1000
+  })
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  })
+
+  res.status(201).json({
+    message: "User registered successfully",
+    accessToken,
+    refreshToken,
+    user: {
+      id: newUser.id,
+      username: newUser.username,
+      email: newUser.email,
+      bio: newUser.bio
+    }
+  })
+})
+
+EX7:
+app.post("/login", limitLoginAttempts, async (req, res) => {
+  const { username, password } = req.body
+
+  if (!username || !password) {
+    return res.status(400).json({
+      message: "Username and password are required"
+    })
+  }
+
+  const user = users.find(user => user.username === username)
+
+  if (!user) {
+    return res.status(401).json({
+      message: "Invalid username or password"
+    })
+  }
+
+  const passwordIsValid = await bcrypt.compare(password, user.password)
+
+  if (!passwordIsValid) {
+    return res.status(401).json({
+      message: "Invalid username or password"
+    })
+  }
+
+  const accessToken = createAccessToken(user)
+  const refreshToken = createRefreshToken(user)
+
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 60 * 60 * 1000
+  })
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  })
+
+  res.status(200).json({
+    message: "Login successful",
+    accessToken,
+    refreshToken,
+    user: {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      bio: user.bio
+    }
+  })
+})
+
+EX8:
+app.get("/profile", authenticateToken, (req, res) => {
+  const user = users.find(user => user.id === req.user.id)
+
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found"
+    })
+  }
+
+  res.status(200).json({
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    bio: user.bio
+  })
+})
+
+EX9:
+app.put("/profile", authenticateToken, (req, res) => {
+  const { username, email, bio } = req.body
+  const user = users.find(user => user.id === req.user.id)
+
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found"
+    })
+  }
+
+  if (username) {
+    user.username = username
+  }
+
+  if (email) {
+    user.email = email
+  }
+
+  if (bio) {
+    user.bio = bio
+  }
+
+  res.status(200).json({
+    message: "Profile updated successfully",
+    user: {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      bio: user.bio
+    }
+  })
+})
+
+EX10:
+app.get("/protected", authenticateToken, (req, res) => {
+  res.status(200).json({
+    message: "You have access to this protected route",
+    user: req.user
+  })
+})
+
+EX11:
+app.post("/refresh", (req, res) => {
+  const refreshToken = req.cookies.refreshToken || req.body.refreshToken
+
+  if (!refreshToken) {
+    return res.status(401).json({
+      message: "Refresh token required"
+    })
+  }
+
+  if (revokedRefreshTokens.includes(refreshToken)) {
+    return res.status(403).json({
+      message: "Refresh token has been revoked"
+    })
+  }
+
+  jwt.verify(refreshToken, REFRESH_SECRET, (error, decodedUser) => {
+    if (error) {
+      return res.status(403).json({
+        message: "Invalid or expired refresh token"
+      })
+    }
+
+    const user = users.find(user => user.id === decodedUser.id)
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      })
+    }
+
+    const newAccessToken = createAccessToken(user)
+
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 1000
+    })
+
+    res.status(200).json({
+      message: "New access token generated",
+      accessToken: newAccessToken
+    })
+  })
+})
+
+EX12:
+app.post("/logout", (req, res) => {
+  const refreshToken = req.cookies.refreshToken || req.body.refreshToken
+
+  if (refreshToken) {
+    revokedRefreshTokens.push(refreshToken)
+  }
+
+  res.clearCookie("accessToken")
+  res.clearCookie("refreshToken")
+
+  res.status(200).json({
+    message: "Logout successful"
+  })
+})
+
+EX13:
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`)
+})
