@@ -1,1 +1,51 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Cards</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        rel="stylesheet"
+    >
+</head>
+
+<body>
+
+<header>
+    <h1><i class="fa-solid fa-book"></i> Book Cards</h1>
+</header>
+
+<section class="search-section">
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="Search a book..."
+    >
+
+    <button id="searchBtn">
+        Search
+    </button>
+
+    <select id="sortSelect">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+    </select>
+
+</section>
+
+<div id="loader" class="loader hidden"></div>
+
+<div id="books" class="books-container"></div>
+
+<div id="message"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
